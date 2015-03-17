@@ -35,6 +35,9 @@ function Gene(options) {
   return {
     mutate: mutate,
     getValue: getValue,
+    getMax: function() {
+      return maxValue;
+    },
     toString: function() {
       return value + ' ';
       // return ['value', value, 'max value', maxValue].join(' ');
@@ -131,7 +134,7 @@ function Chromosome(options) {
                     .slice(previousStartIndex, separators[i] + 1);
 
         for(var j = 0; j < part.length; ++j) {
-          newGenes.push(new Gene({ value: part[j].getValue(), maxValue: size - 1 }));
+          newGenes.push(new Gene({ value: part[j].getValue(), maxValue: part[j].getMax() }));
         }
 
         toggle = !toggle;
@@ -203,9 +206,12 @@ var getTotalDistance = function(chromosome, cities) {
       totalDistanceLength = 0;
 
   for(var i = 0; i < chromosome.getSize(); ++i) {
-    console.log(genes[i], (genes[i] + 1) % chromosome.getSize());
-    debugger;
-    totalDistanceLength += cities[genes[i]].calculateDistanceTo(cities[ (genes[i] + 1) % chromosome.getSize() ]);
+    try {
+      totalDistanceLength += cities[genes[i]].calculateDistanceTo(cities[(genes[(i + 1) % cities.length])]);
+    } catch(e) {
+      console.log(genes);
+      throw e;
+    }
   }
 
   return totalDistanceLength;
@@ -225,7 +231,7 @@ function PopulationWorld(options) {
       prevMinChromosome2Distance,
       currentMinChromosome2Distance,
       counter = 0,
-      stopCounterValue = 3;
+      stopCounterValue = 10;
 
   var selectOne = function(cities, chromosomes2Distances) {
     var maxDistance = 0;
@@ -236,7 +242,7 @@ function PopulationWorld(options) {
   };
 
   var drawMap = function(chromosome) {
-    debugger;
+    console.log(chromosome);
   };
 
   for(var i = 0; i < populationSize; ++i) {
@@ -244,6 +250,7 @@ function PopulationWorld(options) {
   }
 
   for(var i = 0; i < 100; ++i) {
+    console.log('iteration ' + i);
     var str = '';
     var chromosomes2Distances = population.map(function(chromosome) {
 
@@ -252,12 +259,10 @@ function PopulationWorld(options) {
         distance: getTotalDistance(chromosome, cities)
       };
 
-      str += ' ' + chromosome.toString() + ', distance: ' + item.distance;
+      str += ' ' + chromosome.toString() + ' distance: ' + item.distance + '\n';
 
       return item;
     });
-
-    str += "||";
 
     console.log(str);
 
@@ -269,7 +274,10 @@ function PopulationWorld(options) {
       prevMinChromosome2Distance = currentMinChromosome2Distance;
     }
 
+    console.log('prev', prevMinChromosome2Distance.distance, 'curre', currentMinChromosome2Distance.distance, 'counter', counter);
+    
     if (prevMinChromosome2Distance.distance < currentMinChromosome2Distance.distance) {
+      console.log('plus counter', counter);
       counter++;
     }
 
@@ -284,11 +292,11 @@ function PopulationWorld(options) {
           parent2 = selectOne(cities, chromosomes2Distances);
 
       var newCreature = parent1.crossover(parent2, 1);
-      // newCreature.mutate();
       nextPopulation.push(newCreature);
     }
 
     population = nextPopulation;
+    prevMinChromosome2Distance = currentMinChromosome2Distance;
   }
 
   drawMap(currentMinChromosome2Distance);
@@ -304,64 +312,42 @@ cities.push(new City( {name: "A", coords: new Point({x: -2, y: 0})} ));
 cities.push(new City( {name: "B", coords: new Point({x: 0, y: 3})} ));
 cities.push(new City( {name: "C", coords: new Point({x: 0, y: -1})} ));
 cities.push(new City( {name: "D", coords: new Point({x: 4, y: -1})} ));
-// cities.push(new City( {name: "E", coords: new Point({x: 5, y: 1})} ));
-// cities.push(new City( {name: "F", coords: new Point({x: 1, y: 1})} ));
-// cities.push(new City( {name: "G", coords: new Point({x: 3, y: 2})} ));
+cities.push(new City( {name: "E", coords: new Point({x: 5, y: 1})} ));
+cities.push(new City( {name: "F", coords: new Point({x: 1, y: 1})} ));
+cities.push(new City( {name: "G", coords: new Point({x: 3, y: 2})} ));
+cities.push(new City( {name: "H", coords: new Point({x: 14, y: -8})} ));
+cities.push(new City( {name: "K", coords: new Point({x: -52, y: 18})} ));
+
+// cities.push(new City( {name: "A", coords: new Point({x: 2, y: 2})} ));
+// cities.push(new City( {name: "B", coords: new Point({x: 2, y: -2})} ));
+// cities.push(new City( {name: "C", coords: new Point({x: -2, y: -2})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: -2, y: 2})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: 10, y: 7})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: -9, y: 12})} ));
+// cities.push(new City( {name: "A", coords: new Point({x: 2, y: 2})} ));
+// cities.push(new City( {name: "B", coords: new Point({x: 2, y: -2})} ));
+// cities.push(new City( {name: "C", coords: new Point({x: -2, y: -2})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: -2, y: 2})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: 10, y: 7})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: -9, y: 12})} ));
+
+// var genes = [0, 3, 1, 2, 4];
+
+// var totalDistanceLength = 0;
+// for(var i = 0; i < cities.length; ++i) {
+//   totalDistanceLength += cities[genes[i]].calculateDistanceTo(cities[(genes[(i + 1) % cities.length])]);
+// }
+
+// console.log(totalDistanceLength);
+
 
 var population = new PopulationWorld({
   cities: cities,
-  populationSize: 20
+  populationSize: 40
 });
-
-// debugger;
-
-// console.log("Total lengths: " + getTotalDistance(chromosome1));
-
 
 // Жив був Круш. За 3.9 земель. І була в Круша 3 дочки-бочки. Перша дочка Свєта. 
 // Вона цілувалась з жирними мужикамі, коли було лєто.
 // Друга була Анджела. Вона цілувалась з усіма мужиками в СНГ.
 // Третя була Валюха. Вона цілувалась з хачамі, а потім їх динамила.
 // Але тут трапилось бєда... (мєрзость)
-
-
-// var chromosome2 = new Chromosome({
-//   random: true,
-//   size: 4
-// });
-
-// var newChromosome = chromosome1.crossover(chromosome2, 2);
-
-// debugger;
-// console.log(newChromosome);
-
-
-// function main() {
-  // var point = new Point({ x: 10, y: 10 });
-  // var cityList = [new City({name: 'Kyiv', coords: point}), new City({name: 'Lviv', coords: point})];
-
-  // var genom1 = new Genom({
-  //   maxValue: 5,
-  //   value: 2
-  // });
-
-  // var genom2 = new Genom({
-  //   maxValue: 5,
-  //   random: true
-  // });
-
-  // debugger;
-// }
-
-// window.addEventListener('load', main);
-
-
-// var chromosome = new Chromosome({
-//   size: 5,
-//   random: true/false,
-//   indexes: [nums]
-// });
-
-// newChromosome = chromosome.crossover(anotherChromosome);
-// chromosome = chromosome.mutate(amount);
-// chromosome.getIndexes()
