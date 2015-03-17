@@ -11,56 +11,56 @@ var canvas;
 var ctx;
 
 window.onload = function () {
-    initCanvas();
+    // initCanvas();
 
-    city_1_opt = {
-        name: "Seattle",
-        coords: new Point({
-            x: 150, 
-            y: 50
-        })
-    }
+    // city_1_opt = {
+    //     name: "Seattle",
+    //     coords: new Point({
+    //         x: 150, 
+    //         y: 50
+    //     })
+    // }
 
-    city_2_opt = {
-        name: "Los Angeles",
-        coords: new Point({
-            x: 185, 
-            y: 431
-        })
-    }
+    // city_2_opt = {
+    //     name: "Los Angeles",
+    //     coords: new Point({
+    //         x: 185, 
+    //         y: 431
+    //     })
+    // }
 
-    city_3_opt = {
-        name: "Miami",
-        coords: new Point({
-            x: 600, 
-            y: 500
-        })
-    }
+    // city_3_opt = {
+    //     name: "Miami",
+    //     coords: new Point({
+    //         x: 600, 
+    //         y: 500
+    //     })
+    // }
 
-    city_4_opt = {
-        name: "New York",
-        coords: new Point({
-            x: 650, 
-            y: 35
-        })
-    }
+    // city_4_opt = {
+    //     name: "New York",
+    //     coords: new Point({
+    //         x: 650, 
+    //         y: 35
+    //     })
+    // }
 
-    city1 = new City(city_1_opt);
-    city2 = new City(city_2_opt);
-    city3 = new City(city_3_opt);
-    city4 = new City(city_4_opt);
-    drawCity(city1);
-    drawCity(city2);
-    drawCity(city3);
-    drawCity(city4);
+    // city1 = new City(city_1_opt);
+    // city2 = new City(city_2_opt);
+    // city3 = new City(city_3_opt);
+    // city4 = new City(city_4_opt);
+    // drawCity(city1);
+    // drawCity(city2);
+    // drawCity(city3);
+    // drawCity(city4);
 
-    var cityArr = [city1, city2, city3, city4];
-    chromosome = new Chromosome({
-        size: 4,
-        genes: [0, 1, 2, 3]
-    });
+    // var cityArr = [city1, city2, city3, city4];
+    // chromosome = new Chromosome({
+    //     size: 4,
+    //     genes: [0, 1, 2, 3]
+    // });
 
-    drawFullPath(chromosome, cityArr);
+    // drawFullPath(chromosome, cityArr);
 };
 
 function initCanvas() {
