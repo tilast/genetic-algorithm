@@ -1,0 +1,32 @@
+{
+  "name": "lab22",
+  "version": "1.0.0",
+  "description": "GA",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "chai": "^2.1.1",
+    "gulp": "^3.8.11",
+    "gulp-connect": "^2.2.0",
+    "karma": "^0.12.31",
+    "gulp-karma": "^0.0.4",
+    "karma-mocha": "^0.1.10",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-sinon-chai": "^0.3.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.1"
+  },
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tilast/GA.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tilast/GA/issues"
+  },
+  "homepage": "https://github.com/tilast/GA"
+}
