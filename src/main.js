@@ -242,14 +242,15 @@ function PopulationWorld(options) {
   };
 
   var drawMap = function(chromosome) {
-    console.log(chromosome);
+    drawFullPath(chromosome.chromosome, cities);
+    document.getElementById('path').innerHTML = chromosome.chromosome.getGenes().join('->');
   };
 
   for(var i = 0; i < populationSize; ++i) {
     population.push(new Chromosome({ random: true, size: cities.length }));
   }
 
-  for(var i = 0; i < 100; ++i) {
+  for(var i = 0; i < 10000; ++i) {
     console.log('iteration ' + i);
     var str = '';
     var chromosomes2Distances = population.map(function(chromosome) {
@@ -281,9 +282,9 @@ function PopulationWorld(options) {
       counter++;
     }
 
-    if (counter > stopCounterValue) {
-      break;
-    }
+    // if (counter > stopCounterValue) {
+    //   break;
+    // }
 
     nextPopulation = [];
 
@@ -292,6 +293,7 @@ function PopulationWorld(options) {
           parent2 = selectOne(cities, chromosomes2Distances);
 
       var newCreature = parent1.crossover(parent2, 1);
+      newCreature.mutate();
       nextPopulation.push(newCreature);
     }
 
@@ -308,15 +310,15 @@ var cities = [];
 // cities.push(new City( {name: "Miami",  coords: new Point({x: 3, y: 0})} ));
 // cities.push(new City( {name: "Seattle", coords: new Point({x: 0, y: 4})} ));
 
-cities.push(new City( {name: "A", coords: new Point({x: -2, y: 0})} ));
-cities.push(new City( {name: "B", coords: new Point({x: 0, y: 3})} ));
-cities.push(new City( {name: "C", coords: new Point({x: 0, y: -1})} ));
-cities.push(new City( {name: "D", coords: new Point({x: 4, y: -1})} ));
-cities.push(new City( {name: "E", coords: new Point({x: 5, y: 1})} ));
-cities.push(new City( {name: "F", coords: new Point({x: 1, y: 1})} ));
-cities.push(new City( {name: "G", coords: new Point({x: 3, y: 2})} ));
-cities.push(new City( {name: "H", coords: new Point({x: 14, y: -8})} ));
-cities.push(new City( {name: "K", coords: new Point({x: -52, y: 18})} ));
+cities.push(new City( {name: "A", coords: new Point({x: 60, y: 300})} ));
+cities.push(new City( {name: "B", coords: new Point({x: 100, y: 500})} ));
+cities.push(new City( {name: "C", coords: new Point({x: 349, y: 420})} ));
+cities.push(new City( {name: "D", coords: new Point({x: 47, y: 190})} ));
+cities.push(new City( {name: "E", coords: new Point({x: 100, y: 100})} ));
+cities.push(new City( {name: "F", coords: new Point({x: 400, y: 200})} ));
+cities.push(new City( {name: "G", coords: new Point({x: 400, y: 200})} ));
+cities.push(new City( {name: "H", coords: new Point({x: 220, y: 500})} ));
+cities.push(new City( {name: "K", coords: new Point({x: 400, y: 512})} ));
 
 // cities.push(new City( {name: "A", coords: new Point({x: 2, y: 2})} ));
 // cities.push(new City( {name: "B", coords: new Point({x: 2, y: -2})} ));
@@ -340,12 +342,14 @@ cities.push(new City( {name: "K", coords: new Point({x: -52, y: 18})} ));
 
 // console.log(totalDistanceLength);
 
+window.addEventListener('load', function() {
+  initCanvas();
 
-var population = new PopulationWorld({
-  cities: cities,
-  populationSize: 40
+  var population = new PopulationWorld({
+    cities: cities,
+    populationSize: 200
+  });
 });
-
 // Жив був Круш. За 3.9 земель. І була в Круша 3 дочки-бочки. Перша дочка Свєта. 
 // Вона цілувалась з жирними мужикамі, коли було лєто.
 // Друга була Анджела. Вона цілувалась з усіма мужиками в СНГ.
