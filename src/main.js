@@ -1,6 +1,38 @@
-var CROSSOVER_PROBABILITY       = 1;
-var MUTATE_PROBABILITY          = 1;
-var MINIMUM_FITNESS_PROBABILITY = 0;
+var CROSSOVER_PROBABILITY       = 0.75;
+var MUTATE_PROBABILITY          = 0.02;
+// var MINIMUM_FITNESS_PROBABILITY = 0;
+
+Array.prototype.sorted = function() {
+  var newArray = this.slice(0, this.length);
+
+  newArray.sort(function(a, b) {
+    return a - b;
+  });
+
+  return newArray;
+};
+
+function normalize(array) {
+  var koef = 1 / (array.reduce(function(prev, curr) {
+    return prev + curr;
+  }, 0));
+
+  return array.map(function(item) {
+    return item * koef;
+  });
+};
+
+function floatEquality(num1, num2, precision) {
+  return Math.abs(num1 - num2) < precision;
+}
+
+function brutforceMethodSelection(distances) {
+  return normalize(distances
+                    .sorted()
+                    .map(function(distance) {
+                      return 1 / distance;
+                    }));
+}
 
 function Gene(options) {
   var maxValue = options.maxValue,
@@ -145,6 +177,8 @@ function Chromosome(options) {
         directGenes: newGenes,
         size: newGenes.length
       });
+    } else {
+      return Math.random() > 0.5 ? new Chromosome({ size: this.getSize(), genes: this.getGenes() }) : new Chromosome({ size: chromosome.getSize(), genes: chromosome.getGenes() });
     }
   };
 
@@ -233,24 +267,74 @@ function PopulationWorld(options) {
       counter = 0,
       stopCounterValue = 10;
 
-  var selectOne = function(cities, chromosomes2Distances) {
-    var maxDistance = 0;
+  var density2Distribution = function(densities) {
+    return densities.reduce(function(accumulator, current) { 
+      accumulator.push(current + accumulator[accumulator.length - 1]);
+      return accumulator;
+    }, [0]);
+  };
 
-    var index = Math.round(Math.random() * (population.length - 1));
+  var getIndexByBall = function(ball, distribution) {
+    var index = -1;
 
-    return population[index];
+    for(var i = 0; i < distribution.length - 1; ++i) {
+      if(distribution[i] <= ball && ball < distribution[i + 1]) {
+        index = i;
+      }
+    }
+
+    return index;
+  };
+
+  var selectOne = function(cities, chromosomes2Distances, density) {
+    var densities = density2Distribution(density(chromosomes2Distances.map(function(item) {
+      return item.distance;
+    })));
+
+    console.log('densities: ' + densities);
+
+    var index = getIndexByBall(Math.random(), densities);
+
+    return population[getIndexByBall(Math.random(), densities)];
   };
 
   var drawMap = function(chromosome) {
     drawFullPath(chromosome.chromosome, cities);
+    document.getElementById('length').innerHTML = chromosome.distance;
     document.getElementById('path').innerHTML = chromosome.chromosome.getGenes().join('->');
   };
 
-  for(var i = 0; i < populationSize; ++i) {
-    population.push(new Chromosome({ random: true, size: cities.length }));
+  var averagePopulationDistance = function(populationDistances) {
+    return populationDistances.reduce(function(accumulator, current) {
+      return accumulator + current;
+    }, 0) / populationDistances.length;
+  };
+
+  // for(var i = 0; i < populationSize; ++i) {
+  //   population.push(new Chromosome({ random: true, size: cities.length }));
+  // }
+
+  for(var i = 0; i < 3; ++i) {
+    population.push(i);
   }
 
-  for(var i = 0; i < 10000; ++i) {
+  var obj = function(number) {
+    this.distance = number;
+  }
+
+  for (var i = 0; i < 25; i++) {
+    console.log('iter ' + i + '    number: ' 
+      + selectOne(cities, [new obj(1000), new obj(100), new obj(99)], brutforceMethodSelection));
+  };
+  
+
+  return;
+
+  for(var i = 0; i < 1000; ++i) {
+    if(i % 10 == 0 && i != 0) {
+      drawMap(currentMinChromosome2Distance);
+    }
+
     console.log('iteration ' + i);
     var str = '';
     var chromosomes2Distances = population.map(function(chromosome) {
@@ -265,7 +349,9 @@ function PopulationWorld(options) {
       return item;
     });
 
-    console.log(str);
+    console.log('average population distance', averagePopulationDistance(chromosomes2Distances.map(function(item) { return item.distance; })));
+
+    // console.log(str);
 
     currentMinChromosome2Distance = chromosomes2Distances.reduce(function(previousCreature, nextCreature) {
       return previousCreature.distance < nextCreature.distance ? previousCreature : nextCreature;
@@ -289,10 +375,11 @@ function PopulationWorld(options) {
     nextPopulation = [];
 
     for(var j = 0; j < population.length; ++j) {
-      var parent1 = selectOne(cities, chromosomes2Distances),
-          parent2 = selectOne(cities, chromosomes2Distances);
+      var parent1 = selectOne(cities, chromosomes2Distances, brutforceMethodSelection),
+          parent2 = selectOne(cities, chromosomes2Distances, brutforceMethodSelection);
 
       var newCreature = parent1.crossover(parent2, 1);
+      
       newCreature.mutate();
       nextPopulation.push(newCreature);
     }
@@ -316,7 +403,7 @@ cities.push(new City( {name: "C", coords: new Point({x: 349, y: 420})} ));
 cities.push(new City( {name: "D", coords: new Point({x: 47, y: 190})} ));
 cities.push(new City( {name: "E", coords: new Point({x: 100, y: 100})} ));
 cities.push(new City( {name: "F", coords: new Point({x: 400, y: 200})} ));
-cities.push(new City( {name: "G", coords: new Point({x: 400, y: 200})} ));
+cities.push(new City( {name: "G", coords: new Point({x: 400, y: 280})} ));
 cities.push(new City( {name: "H", coords: new Point({x: 220, y: 500})} ));
 cities.push(new City( {name: "K", coords: new Point({x: 400, y: 512})} ));
 
@@ -342,12 +429,15 @@ cities.push(new City( {name: "K", coords: new Point({x: 400, y: 512})} ));
 
 // console.log(totalDistanceLength);
 
+// console.log(brutforceMethodSelection([50, 60, 70, 80, 100, 90]));
+
+// working part
 window.addEventListener('load', function() {
   initCanvas();
 
   var population = new PopulationWorld({
     cities: cities,
-    populationSize: 200
+    populationSize: 50
   });
 });
 // Жив був Круш. За 3.9 земель. І була в Круша 3 дочки-бочки. Перша дочка Свєта. 

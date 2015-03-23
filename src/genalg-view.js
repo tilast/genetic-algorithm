@@ -93,6 +93,7 @@ function canvasClickHandler(element) {
 }
 
 function drawFullPath(chromosome, cities) {
+    ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
     var seq = chromosome.getGenes();
     for (var i = 0; i < seq.length; ++i) {
         connectCities(cities[seq[i]], cities[seq[(i + 1) % seq.length]]);
