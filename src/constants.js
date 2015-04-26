@@ -1,0 +1,4 @@
+module.exports = {
+  CROSSOVER_PROBABILITY: 0.75,
+  MUTATE_PROBABILITY   : 0.02
+};

@@ -7,18 +7,28 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
+    browserNoActivityTimeout: 100000,
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'sinon-chai'],
-
+    frameworks: ['mocha', 'sinon-chai', 'browserify'],
 
     // list of files / patterns to load in the browser
     files: [
-      'src/**/*.js',
+      // 'src/constants.js',
+      // 'src/point.js',
+      // 'src/city.js',
+      // 'src/utils.js',
+      // 'src/gene.js',
+      // 'src/chromosome.js',
+      // // 'src/**/*.js',
       'spec/**/*_spec.js'
     ],
 
+    browserify: {
+      debug: true,
+      transform: [ 'brfs' ]
+    },
 
     // list of files to exclude
     exclude: [
@@ -28,6 +38,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'spec/**/*_spec.js': [ 'browserify' ]
     },
 
 

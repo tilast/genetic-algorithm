@@ -1,3 +1,6 @@
+var Chromosome = require('../src/new_chromosome');
+var Gene       = require('../src/gene');
+
 describe('Chromosome', function() {
 
   describe('creating', function() {

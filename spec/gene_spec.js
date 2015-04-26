@@ -1,3 +1,5 @@
+var Gene = require('../src/gene');
+
 describe('Gene', function() {
   describe('creates successfully', function() {
     
@@ -6,8 +8,6 @@ describe('Gene', function() {
         maxValue: 10,
         random: true
       });
-
-      console.log(gene.getValue());
 
       expect(gene.getValue()).to.exist;
     });
