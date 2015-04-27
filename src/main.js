@@ -1,3 +1,7 @@
+var PopulationWorld = require('./population_world');
+var City = require('./city');
+var Point = require('./point');
+
 var cities = [];
 
 // cities.push(new City( {name: "Los Angeles", coords: new Point({x: 0, y: 0})} ));
@@ -40,7 +44,7 @@ cities.push(new City( {name: "K", coords: new Point({x: 400, y: 512})} ));
 
 // working part
 window.addEventListener('load', function() {
-  initCanvas();
+  // initCanvas();
 
   var population = new PopulationWorld({
     cities: cities,

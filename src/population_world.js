@@ -1,5 +1,6 @@
-var Gene       = require('./gene');
 var Chromosome = require('./chromosome');
+var Utils      = require('./utils');
+var Drawer     = require('./drawer');
 
 function PopulationWorld(options) {
   var stop = false,
@@ -11,7 +12,8 @@ function PopulationWorld(options) {
       prevMinChromosome2Distance,
       currentMinChromosome2Distance,
       counter = 0,
-      stopCounterValue = 10;
+      stopCounterValue = 10,
+      drawer = new Drawer();
 
   var density2Distribution = function(densities) {
     return densities.reduce(function(accumulator, current) { 
@@ -37,15 +39,11 @@ function PopulationWorld(options) {
       return item.distance;
     })));
 
-    console.log('densities: ' + densities);
-
-    var index = getIndexByBall(Math.random(), densities);
-
     return population[getIndexByBall(Math.random(), densities)];
   };
 
   var drawMap = function(chromosome) {
-    drawFullPath(chromosome.chromosome, cities);
+    drawer.draw(chromosome.chromosome, cities);
     document.getElementById('length').innerHTML = chromosome.distance;
     document.getElementById('path').innerHTML = chromosome.chromosome.getGenes().join('->');
   };
@@ -61,17 +59,13 @@ function PopulationWorld(options) {
   }
 
   for(var i = 0; i < 1000; ++i) {
-    // if(i % 10 == 0 && i != 0) {
-    //   drawMap(currentMinChromosome2Distance);
-    // }
-
     console.log('iteration ' + i);
     var str = '';
     var chromosomes2Distances = population.map(function(chromosome) {
       try {
         var item =  {
           chromosome: chromosome,
-          distance: getTotalDistance(chromosome, cities)
+          distance: Utils.getTotalDistance(chromosome, cities)
         };
       } catch (e) {
         debugger;
@@ -84,8 +78,6 @@ function PopulationWorld(options) {
     });
 
     console.log('average population distance', averagePopulationDistance(chromosomes2Distances.map(function(item) { return item.distance; })));
-
-    // console.log(str);
 
     currentMinChromosome2Distance = chromosomes2Distances.reduce(function(previousCreature, nextCreature) {
       return previousCreature.distance < nextCreature.distance ? previousCreature : nextCreature;
@@ -102,17 +94,13 @@ function PopulationWorld(options) {
       counter++;
     }
 
-    // if (counter > stopCounterValue) {
-    //   break;
-    // }
-
     nextPopulation = [];
 
     for(var j = 0; j < population.length; ++j) {
-      var parent1 = selectOne(cities, chromosomes2Distances, brutforceMethodSelection),
-          parent2 = selectOne(cities, chromosomes2Distances, brutforceMethodSelection);
+      var parent1 = selectOne(cities, chromosomes2Distances, Utils.brutforceMethodSelection),
+          parent2 = selectOne(cities, chromosomes2Distances, Utils.brutforceMethodSelection);
 
-      var newCreature = parent1.crossover(parent2, 1);
+      var newCreature = parent1.crossover(parent2, 2);
       
       newCreature.mutate();
       nextPopulation.push(newCreature);
@@ -124,3 +112,5 @@ function PopulationWorld(options) {
 
   drawMap(currentMinChromosome2Distance);
 }
+
+module.exports = PopulationWorld;

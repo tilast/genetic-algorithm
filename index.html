@@ -6,19 +6,20 @@
 </head>
 <body>
   
-  <canvas id="canvas" style="border: 1px solid #ccc"></canvas>
+  <!-- <canvas id="canvas" style="border: 1px solid #ccc"></canvas> -->
+  <div id="drawer"></div>
   <div id="path"></div>
   <div id="length"></div>
 
-  <script src="immutable.js"></script>
-  <script src="src/genalg-view.js"></script>
-  <script src="src/constants.js"></script>
-  <script src="src/point.js"></script>
-  <script src="src/city.js"></script>
-  <script src="src/utils.js"></script>
-  <script src="src/gene.js"></script>
-  <script src="src/chromosome.js"></script>
-  <script src="src/population_world.js"></script>
-  <script src="src/main.js"></script>
+  <div class="parameters">
+    <label>
+      Iterations amount: <input id="iterationaAmount">
+    </label>
+    <label>
+      Population size: <input id="iterationaAmount">
+    </label>
+  </div>
+
+  <script src="dist/main.js"></script>
 </body>
 </html>
