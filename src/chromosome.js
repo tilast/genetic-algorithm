@@ -58,11 +58,11 @@ Chromosome.prototype.getGenes = function() {
 };
 
 Chromosome.prototype.crossover = function(chromosome, pointsAmount) {
-  if(Math.random() < Utils.CROSSOVER_PROBABILITY) {
+  if(Math.random() < Constants.CROSSOVER_PROBABILITY) {
     var maybeSeparators = [],
         separators = [];
 
-    for(var i = 0; i < size - 1; ++i) {
+    for(var i = 0; i < this.size - 1; ++i) {
       maybeSeparators.push(i);
     }
 
@@ -76,11 +76,11 @@ Chromosome.prototype.crossover = function(chromosome, pointsAmount) {
         toggle   = Math.round(Math.random()),
         previousStartIndex = 0;
 
-    separators.push(size);
-    separators.sort();
+    separators.push(this.size);
+    separators = separators.sorted();
 
     for(var i = 0; i < separators.length; ++i) {
-      var part = (toggle ? genes : chromosome.getEncoded())
+      var part = (toggle ? this.genes : chromosome.getEncoded())
                   .slice(previousStartIndex, separators[i] + 1);
 
       for(var j = 0; j < part.length; ++j) {
@@ -101,9 +101,9 @@ Chromosome.prototype.crossover = function(chromosome, pointsAmount) {
 };
 
 Chromosome.prototype.mutate = function() {
-  if (Math.random() < Utils.MUTATE_PROBABILITY) {
-    var number = Math.round(Math.random() * (size - 1));
-
+  if (Math.random() < Constants.MUTATE_PROBABILITY) {
+    var number = Math.round(Math.random() * (this.size - 1));
+    
     this.genes[number].mutate();
   }
 };

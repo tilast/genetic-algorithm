@@ -10963,11 +10963,11 @@ Chromosome.prototype.getGenes = function() {
 };
 
 Chromosome.prototype.crossover = function(chromosome, pointsAmount) {
-  if(Math.random() < Utils.CROSSOVER_PROBABILITY) {
+  if(Math.random() < Constants.CROSSOVER_PROBABILITY) {
     var maybeSeparators = [],
         separators = [];
 
-    for(var i = 0; i < size - 1; ++i) {
+    for(var i = 0; i < this.size - 1; ++i) {
       maybeSeparators.push(i);
     }
 
@@ -10981,11 +10981,11 @@ Chromosome.prototype.crossover = function(chromosome, pointsAmount) {
         toggle   = Math.round(Math.random()),
         previousStartIndex = 0;
 
-    separators.push(size);
-    separators.sort();
+    separators.push(this.size);
+    separators = separators.sorted();
 
     for(var i = 0; i < separators.length; ++i) {
-      var part = (toggle ? genes : chromosome.getEncoded())
+      var part = (toggle ? this.genes : chromosome.getEncoded())
                   .slice(previousStartIndex, separators[i] + 1);
 
       for(var j = 0; j < part.length; ++j) {
@@ -11006,9 +11006,9 @@ Chromosome.prototype.crossover = function(chromosome, pointsAmount) {
 };
 
 Chromosome.prototype.mutate = function() {
-  if (Math.random() < Utils.MUTATE_PROBABILITY) {
-    var number = Math.round(Math.random() * (size - 1));
-
+  if (Math.random() < Constants.MUTATE_PROBABILITY) {
+    var number = Math.round(Math.random() * (this.size - 1));
+    
     this.genes[number].mutate();
   }
 };
@@ -11049,8 +11049,8 @@ module.exports = City;
 },{"1YiZ5S":5,"buffer":2}],8:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 module.exports = {
-  CROSSOVER_PROBABILITY: 0.80,
-  MUTATE_PROBABILITY   : 0.05
+  CROSSOVER_PROBABILITY: 0.90,
+  MUTATE_PROBABILITY   : 0.10
 };
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/constants.js","/")
 },{"1YiZ5S":5,"buffer":2}],9:[function(require,module,exports){
@@ -11095,16 +11095,10 @@ function Drawer() {
   }
 }
 
-Drawer.prototype.draw = function(chromosome, cities) {
+Drawer.prototype.draw = function(nodes) {
   var _this = this;
 
-  var nodes = chromosome.getGenes().map(function(city) {
-    return {
-      x   : cities[city].getCoords().getX(),
-      y   : cities[city].getCoords().getY(),
-      name: cities[city].getName() + '(' + city + ')'
-    };
-  });
+  this.vis.selectAll('*').remove();
 
   var links = [];
   for(var i = 0; i <= nodes.length; ++i) {
@@ -11154,15 +11148,52 @@ var cities = [];
 // cities.push(new City( {name: "Miami",  coords: new Point({x: 3, y: 0})} ));
 // cities.push(new City( {name: "Seattle", coords: new Point({x: 0, y: 4})} ));
 
-cities.push(new City( {name: "A", coords: new Point({x: 60, y: 300})} ));
-cities.push(new City( {name: "B", coords: new Point({x: 100, y: 500})} ));
-cities.push(new City( {name: "C", coords: new Point({x: 349, y: 420})} ));
-cities.push(new City( {name: "D", coords: new Point({x: 47, y: 190})} ));
-cities.push(new City( {name: "E", coords: new Point({x: 100, y: 100})} ));
-cities.push(new City( {name: "F", coords: new Point({x: 400, y: 200})} ));
-cities.push(new City( {name: "G", coords: new Point({x: 400, y: 280})} ));
-cities.push(new City( {name: "H", coords: new Point({x: 220, y: 500})} ));
-cities.push(new City( {name: "K", coords: new Point({x: 400, y: 512})} ));
+// cities.push(new City( {name: "A", coords: new Point({x: 60, y: 300})} ));
+// cities.push(new City( {name: "B", coords: new Point({x: 100, y: 500})} ));
+// cities.push(new City( {name: "C", coords: new Point({x: 349, y: 420})} ));
+// cities.push(new City( {name: "D", coords: new Point({x: 47, y: 190})} ));
+// cities.push(new City( {name: "E", coords: new Point({x: 100, y: 100})} ));
+// cities.push(new City( {name: "F", coords: new Point({x: 400, y: 200})} ));
+// cities.push(new City( {name: "G", coords: new Point({x: 400, y: 280})} ));
+// cities.push(new City( {name: "H", coords: new Point({x: 220, y: 500})} ));
+// cities.push(new City( {name: "K", coords: new Point({x: 400, y: 512})} ));
+
+var points = [282.920601761, 240.192688771,
+311.755613444, 350.55661522,
+336.932896782, 349.084953235,
+318.415931638, 256.05256963,
+293.672288938, 251.458355931,
+480.353594241, 363.058928923,
+171.347425719, 443.294722569,
+301.244125627, 113.620853689,
+294.256186608, 98.6610596663,
+449.260630122, 173.752157021,
+221.688257026, 119.870986678,
+354.753271123, 111.54071043,
+287.64065948, 357.836434962,
+336.297721379, 329.36537577,
+322.768134042, 252.029046411,
+280.708780993, 245.595438424,
+486.31388301, 387.794590773,
+417.776543084, 447.239047879,
+172.95700707, 164.669429449,
+308.72281828, 247.710648001,
+324.785492607, 264.157372636,
+256.351345599, 251.263373914,
+310.380500327, 355.787232388,
+100.394689626, 301.985756303,
+254.979773508, 482.405470515,
+253.863885258, 309.387735894,
+122.743610053, 375.854918693,
+349.702703571, 275.2431212,
+312.867909525, 496.548628469,
+350.122180718, 331.125546229];
+
+for(var i = 0; i < points.length; i += 2) {
+  cities.push(new City( {name: "", coords: new Point({x: points[i], y: points[i+1]})} ));
+}
+
+console.log(cities.map(function(city){ return city.getName() + ': ' + city.getCoords().getX() + ' ' + city.getCoords().getY(); }));
 
 // cities.push(new City( {name: "A", coords: new Point({x: 2, y: 2})} ));
 // cities.push(new City( {name: "B", coords: new Point({x: 2, y: -2})} ));
@@ -11194,7 +11225,11 @@ window.addEventListener('load', function() {
 
   var population = new PopulationWorld({
     cities: cities,
-    populationSize: 50
+    populationSize: 100
+  });
+
+  document.querySelector("#run").addEventListener('click', function() {
+    population.run();
   });
 });
 // Жив був Круш. За 3.9 земель. І була в Круша 3 дочки-бочки. Перша дочка Свєта. 
@@ -11203,7 +11238,7 @@ window.addEventListener('load', function() {
 // Третя була Валюха. Вона цілувалась з хачамі, а потім їх динамила.
 // Але тут трапилось бєда... (мєрзость)
 
-}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_743683c1.js","/")
+}).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_44d4902c.js","/")
 },{"./city":7,"./point":12,"./population_world":13,"1YiZ5S":5,"buffer":2}],11:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 function Gene(options) {
@@ -11276,124 +11311,170 @@ var Utils      = require('./utils');
 var Drawer     = require('./drawer');
 
 function PopulationWorld(options) {
-  var stop = false,
-      result = null,
-      cities = options.cities,
-      populationSize = options.populationSize,
-      population = [],
-      nextPopulation = [],
-      prevMinChromosome2Distance,
-      currentMinChromosome2Distance,
-      counter = 0,
-      stopCounterValue = 10,
-      drawer = new Drawer();
+  this.stop = false;
+  this.result = null;
+  this.cities = options.cities;
+  this.populationSize = options.populationSize;
+  this.drawer = new Drawer();
+}
 
-  var density2Distribution = function(densities) {
-    return densities.reduce(function(accumulator, current) { 
-      accumulator.push(current + accumulator[accumulator.length - 1]);
-      return accumulator;
-    }, [0]);
-  };
+PopulationWorld.prototype.reset = function() {
+  this.population = [];
+  this.nextPopulation = [];
+  this.prevMinChromosome2Distance;
+  this.prevMaxChromosome2Distance;
+  this.currentMinChromosome2Distance;
+  this.currentMaxChromosome2Distance;
+  this.avg = 0;
+  this.prevAvg = 0;
+  this.counter = 0;
+  this.STOP_COUNTER_VALUE = 20;
+  this.topBarrier = 150;
+  this.ITERATIONS_AMOUNT = 1500;
+  this.log = [];
+};
 
-  var getIndexByBall = function(ball, distribution) {
-    var index = -1;
+PopulationWorld.prototype.run = function() {
+  this.reset();
 
-    for(var i = 0; i < distribution.length - 1; ++i) {
-      if(distribution[i] <= ball && ball < distribution[i + 1]) {
-        index = i;
-      }
-    }
-
-    return index;
-  };
-
-  var selectOne = function(cities, chromosomes2Distances, density) {
-    var densities = density2Distribution(density(chromosomes2Distances.map(function(item) {
-      return item.distance;
-    })));
-
-    return population[getIndexByBall(Math.random(), densities)];
-  };
-
-  var drawMap = function(chromosome) {
-    drawer.draw(chromosome.chromosome, cities);
-    document.getElementById('length').innerHTML = chromosome.distance;
-    document.getElementById('path').innerHTML = chromosome.chromosome.getGenes().join('->');
-  };
-
-  var averagePopulationDistance = function(populationDistances) {
-    return populationDistances.reduce(function(accumulator, current) {
-      return accumulator + current;
-    }, 0) / populationDistances.length;
-  };
-
-  for(var i = 0; i < populationSize; ++i) {
-    population.push(new Chromosome({ random: true, size: cities.length }));
+  for(var i = 0; i < this.populationSize; ++i) {
+    this.population.push(new Chromosome({ random: true, size: this.cities.length }));
   }
 
-  for(var i = 0; i < 1000; ++i) {
+  var _this = this;
+
+  var str = '';
+
+  for(var i = 0; i < this.ITERATIONS_AMOUNT; ++i) {
     console.log('iteration ' + i);
     var str = '';
-    var chromosomes2Distances = population.map(function(chromosome) {
-      try {
-        var item =  {
-          chromosome: chromosome,
-          distance: Utils.getTotalDistance(chromosome, cities)
-        };
-      } catch (e) {
-        debugger;
-        return;
-      }
+    var chromosomes2Distances = this.population.map(function(chromosome) {
+      var item =  {
+        chromosome: chromosome,
+        distance: Utils.getTotalDistance(chromosome, _this.cities)
+      };
 
       str += ' ' + chromosome.toString() + ' distance: ' + item.distance + '\n';
 
       return item;
     });
 
-    console.log('average population distance', averagePopulationDistance(chromosomes2Distances.map(function(item) { return item.distance; })));
+    if(this.avg - this.prevAvg > this.topBarrier) {
+      ++this.counter;
+    }
 
-    currentMinChromosome2Distance = chromosomes2Distances.reduce(function(previousCreature, nextCreature) {
+    if(this.counter > this.STOP_COUNTER_VALUE) {
+      break;
+    }
+
+    this.prevAvg = this.avg;
+    this.avg = this.averagePopulationDistance(chromosomes2Distances.map(function(item) { return item.distance; }));
+
+    console.log('average population distance', this.averagePopulationDistance(chromosomes2Distances.map(function(item) { return item.distance; })));
+
+    this.currentMinChromosome2Distance = chromosomes2Distances.reduce(function(previousCreature, nextCreature) {
       return previousCreature.distance < nextCreature.distance ? previousCreature : nextCreature;
     }, chromosomes2Distances[0]);
 
-    if (!prevMinChromosome2Distance) {
-      prevMinChromosome2Distance = currentMinChromosome2Distance;
+    this.currentMaxChromosome2Distance = chromosomes2Distances.reduce(function(previousCreature, nextCreature) {
+      return previousCreature.distance > nextCreature.distance ? previousCreature : nextCreature;
+    }, chromosomes2Distances[0]);
+
+    if (!this.prevMinChromosome2Distance) {
+      this.prevMinChromosome2Distance = this.currentMinChromosome2Distance;
+      this.prevMaxChromosome2Distance = this.currentMaxChromosome2Distance;
     }
 
-    console.log('prev', prevMinChromosome2Distance.distance, 'curre', currentMinChromosome2Distance.distance, 'counter', counter);
+    // console.log('min', this.currentMinChromosome2Distance.distance, 'max', this.currentMaxChromosome2Distance.distance, 'counter', this.counter);
     
-    if (prevMinChromosome2Distance.distance < currentMinChromosome2Distance.distance) {
-      console.log('plus counter', counter);
-      counter++;
-    }
+    // if (this.prevMinChromosome2Distance.distance < this.currentMinChromosome2Distance.distance) {
+    //   console.log('plus counter', this.counter);
+    //   // this.counter++;
+    // }
 
-    nextPopulation = [];
+    this.nextPopulation = [];
 
-    for(var j = 0; j < population.length; ++j) {
-      var parent1 = selectOne(cities, chromosomes2Distances, Utils.brutforceMethodSelection),
-          parent2 = selectOne(cities, chromosomes2Distances, Utils.brutforceMethodSelection);
+    for(var j = 0; j < this.population.length; ++j) {
+      var parent1 = this.selectOne(chromosomes2Distances, Utils.sutulaMethodSelection),
+          parent2 = this.selectOne(chromosomes2Distances, Utils.sutulaMethodSelection);
 
-      var newCreature = parent1.crossover(parent2, 2);
+      var newCreature = parent1.crossover(parent2, 3);
       
       newCreature.mutate();
-      nextPopulation.push(newCreature);
+      this.nextPopulation.push(newCreature);
     }
 
-    population = nextPopulation;
-    prevMinChromosome2Distance = currentMinChromosome2Distance;
+    this.population = this.nextPopulation;
+    this.prevMinChromosome2Distance = this.currentMinChromosome2Distance;
+    this.prevMaxChromosome2Distance = this.currentMaxChromosome2Distance;
+
+    if(i > 0 && i % 50 == 0) {
+      this.log.push(this.currentMinChromosome2Distance.chromosome.getGenes().map(function(city) {
+        return {
+          x   : _this.cities[city].getCoords().getX(),
+          y   : _this.cities[city].getCoords().getY(),
+          name: _this.cities[city].getName() + '(' + city + ')'
+        };
+      }));
+    }
   }
 
-  drawMap(currentMinChromosome2Distance);
-}
+  for(var i = 0; i < this.log.length; ++i) {
+    (function(i) {
+      setTimeout(function() {
+        _this.drawMap(_this.log[i]);
+      }, 500 * (i+1));
+    })(i);
+  }
+};
+
+PopulationWorld.prototype.density2Distribution = function(densities) {
+  return densities.reduce(function(accumulator, current) { 
+    accumulator.push(current + accumulator[accumulator.length - 1]);
+    return accumulator;
+  }, [0]);
+};
+
+PopulationWorld.prototype.getIndexByBall = function(ball, distribution) {
+  var index = -1;
+
+  for(var i = 0; i < distribution.length - 1; ++i) {
+    if(distribution[i] <= ball && ball < distribution[i + 1]) {
+      index = i;
+    }
+  }
+
+  return index;
+};
+
+PopulationWorld.prototype.selectOne = function(chromosomes2Distances, density) {
+  var distributions = this.density2Distribution(density(chromosomes2Distances.map(function(item) {
+    return item.distance;
+  })));
+
+  return this.population[this.getIndexByBall(Math.random(), distributions)];
+};
+
+PopulationWorld.prototype.drawMap = function(cities) {
+  this.drawer.draw(cities);
+  // document.getElementById('length').innerHTML = chromosome.distance;
+  // document.getElementById('path').innerHTML = chromosome.chromosome.getGenes().join('->');
+};
+
+PopulationWorld.prototype.averagePopulationDistance = function(populationDistances) {
+  return populationDistances.reduce(function(accumulator, current) {
+    return accumulator + current;
+  }, 0) / populationDistances.length;
+};
 
 module.exports = PopulationWorld;
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/population_world.js","/")
 },{"./chromosome":6,"./drawer":9,"./utils":14,"1YiZ5S":5,"buffer":2}],14:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-Array.prototype.sorted = function() {
+Array.prototype.sorted = function(comparator) {
   var newArray = this.slice(0, this.length);
 
-  newArray.sort(function(a, b) {
+  newArray.sort(comparator ? comparator : function(a, b) {
     return a - b;
   });
 
@@ -11402,6 +11483,14 @@ Array.prototype.sorted = function() {
 
 Number.prototype.times = function() {
   return Array.apply(null, {length: this}).map(Number.call, Number);
+};
+
+Array.prototype.first = function() {
+  return this[0];
+};
+
+Array.prototype.last = function() {
+  return this[this.length - 1];
 };
 
 var normalize = function normalize(array) {
@@ -11420,11 +11509,53 @@ var floatEquality = function floatEquality(num1, num2, precision) {
 
 var brutforceMethodSelection = function brutforceMethodSelection(distances) {
   return normalize(distances
-                    .sorted()
                     .map(function(distance) {
                       return 1 / distance;
                     }));
-}
+};
+
+var sutulaMethodSelection = function sutulaMethodSelection(distances) {
+  var sortedDistances = distances.map(function(distance, i) {
+    return {
+      distance: distance,
+      index   : i
+    };
+  }).sorted(function(a, b) {
+    return a.distance - b.distance;
+  });
+
+  var dist_range = sortedDistances.last().distance - sortedDistances.first().distance;
+  var probs = [];
+
+  if(dist_range < 0.0001) {
+    return (sortedDistances.length).times().map(function(i) {
+      return 1;
+    });
+  }
+
+  var getProb = function(min, max, range, amount) {
+    return (max - min) * (1.0 / range) * (1.0 / amount);
+  };
+
+  for(var i = 0; i < distances.length; ++i) {
+    var prob = 0;
+
+    for(var j = i + 1; j < distances.length; ++j) {
+      prob += getProb(sortedDistances[j - 1].distance, sortedDistances[j].distance, dist_range, j);
+    }
+
+    probs.push({
+      prob: prob,
+      index: sortedDistances[i].index
+    });
+  }
+
+  return probs.sorted(function(a, b) {
+    return a.index - b.index;
+  }).map(function(item) {
+    return item.prob;
+  });
+};
 
 var getTotalDistance = function getTotalDistance(chromosome, cities) {
   var genes = chromosome.getGenes(),
@@ -11434,7 +11565,7 @@ var getTotalDistance = function getTotalDistance(chromosome, cities) {
     try {
       totalDistanceLength += cities[genes[i]].calculateDistanceTo(cities[(genes[(i + 1) % cities.length])]);
     } catch(e) {
-      console.log(genes);
+      debugger;
       throw e;
     }
   }
@@ -11452,7 +11583,8 @@ module.exports = {
   floatEquality: floatEquality,
   brutforceMethodSelection: brutforceMethodSelection,
   getTotalDistance: getTotalDistance,
-  fitness: fitness
+  fitness: fitness,
+  sutulaMethodSelection: sutulaMethodSelection
 };
 }).call(this,require("1YiZ5S"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/utils.js","/")
 },{"1YiZ5S":5,"buffer":2}]},{},[10])

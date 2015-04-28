@@ -1,7 +1,7 @@
-Array.prototype.sorted = function() {
+Array.prototype.sorted = function(comparator) {
   var newArray = this.slice(0, this.length);
 
-  newArray.sort(function(a, b) {
+  newArray.sort(comparator ? comparator : function(a, b) {
     return a - b;
   });
 
@@ -10,6 +10,14 @@ Array.prototype.sorted = function() {
 
 Number.prototype.times = function() {
   return Array.apply(null, {length: this}).map(Number.call, Number);
+};
+
+Array.prototype.first = function() {
+  return this[0];
+};
+
+Array.prototype.last = function() {
+  return this[this.length - 1];
 };
 
 var normalize = function normalize(array) {
@@ -28,11 +36,53 @@ var floatEquality = function floatEquality(num1, num2, precision) {
 
 var brutforceMethodSelection = function brutforceMethodSelection(distances) {
   return normalize(distances
-                    .sorted()
                     .map(function(distance) {
                       return 1 / distance;
                     }));
-}
+};
+
+var sutulaMethodSelection = function sutulaMethodSelection(distances) {
+  var sortedDistances = distances.map(function(distance, i) {
+    return {
+      distance: distance,
+      index   : i
+    };
+  }).sorted(function(a, b) {
+    return a.distance - b.distance;
+  });
+
+  var dist_range = sortedDistances.last().distance - sortedDistances.first().distance;
+  var probs = [];
+
+  if(dist_range < 0.0001) {
+    return (sortedDistances.length).times().map(function(i) {
+      return 1;
+    });
+  }
+
+  var getProb = function(min, max, range, amount) {
+    return (max - min) * (1.0 / range) * (1.0 / amount);
+  };
+
+  for(var i = 0; i < distances.length; ++i) {
+    var prob = 0;
+
+    for(var j = i + 1; j < distances.length; ++j) {
+      prob += getProb(sortedDistances[j - 1].distance, sortedDistances[j].distance, dist_range, j);
+    }
+
+    probs.push({
+      prob: prob,
+      index: sortedDistances[i].index
+    });
+  }
+
+  return probs.sorted(function(a, b) {
+    return a.index - b.index;
+  }).map(function(item) {
+    return item.prob;
+  });
+};
 
 var getTotalDistance = function getTotalDistance(chromosome, cities) {
   var genes = chromosome.getGenes(),
@@ -42,7 +92,7 @@ var getTotalDistance = function getTotalDistance(chromosome, cities) {
     try {
       totalDistanceLength += cities[genes[i]].calculateDistanceTo(cities[(genes[(i + 1) % cities.length])]);
     } catch(e) {
-      console.log(genes);
+      debugger;
       throw e;
     }
   }
@@ -60,5 +110,6 @@ module.exports = {
   floatEquality: floatEquality,
   brutforceMethodSelection: brutforceMethodSelection,
   getTotalDistance: getTotalDistance,
-  fitness: fitness
+  fitness: fitness,
+  sutulaMethodSelection: sutulaMethodSelection
 };

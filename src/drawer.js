@@ -38,16 +38,10 @@ function Drawer() {
   }
 }
 
-Drawer.prototype.draw = function(chromosome, cities) {
+Drawer.prototype.draw = function(nodes) {
   var _this = this;
 
-  var nodes = chromosome.getGenes().map(function(city) {
-    return {
-      x   : cities[city].getCoords().getX(),
-      y   : cities[city].getCoords().getY(),
-      name: cities[city].getName() + '(' + city + ')'
-    };
-  });
+  this.vis.selectAll('*').remove();
 
   var links = [];
   for(var i = 0; i <= nodes.length; ++i) {
